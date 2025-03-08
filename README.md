@@ -1,5 +1,5 @@
 # json-graphql-server
- ![travis (.org)](https://img.shields.io/travis/marmelab/json-graphql-server.svg) ![github top language](https://img.shields.io/github/languages/top/marmelab/json-graphql-server.svg) ![David. dependencies](https://david-dm.org/marmelab/json-graphql-server.svg) ![npm](https://img.shields.io/npm/v/json-graphql-server.svg) ![github contributors](https://img.shields.io/github/contributors/marmelab/json-graphql-server.svg) ![license](https://img.shields.io/github/license/marmelab/json-graphql-server.svg) ![prs welcome](https://img.shields.io/badge/prs-welcome-brightgreen.svg)
+![github top language](https://img.shields.io/github/languages/top/marmelab/json-graphql-server.svg) ![npm](https://img.shields.io/npm/v/json-graphql-server.svg) ![github contributors](https://img.shields.io/github/contributors/marmelab/json-graphql-server.svg) ![license](https://img.shields.io/github/license/marmelab/json-graphql-server.svg) ![prs welcome](https://img.shields.io/badge/prs-welcome-brightgreen.svg)
 
 Get a full fake GraphQL API with zero coding in less than 30 seconds.
 
@@ -8,20 +8,15 @@ Get a full fake GraphQL API with zero coding in less than 30 seconds.
 > I'd love to learn GraphQL, but it seems that I first have to read a book about GraphQL Types and Queries, then install a gazillion npm packages.
 > - About every developer
 
-Start playing with GraphQL right away with `json-graphql-server`, a testing and mocking tool for GraphQL. All it takes is a JSON of your data.
+Start playing with GraphQL right away with `json-graphql-server`, a testing and mocking tool for GraphQL written in Node.js. All it takes is a JSON of your data.
 
 Inspired by the excellent [json-server](https://github.com/typicode/json-server).
 
-## Example
-
-Follow the guide below starting from scratch, or see the example live on StackBlitz:
+## Usage
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/fork/json-graphql-server)
 
-
-Create a `db.js` file.
-
-Your data file should export an object where the keys are the entity types. The values should be lists of entities, i.e. arrays of value objects with at least an `id` key. For instance:
+Create a `db.js` file that exports an object where the keys are the entity types. The values should be lists of entities, i.e. arrays of value objects with at least an `id` key. For instance:
 
 ```js
 module.exports = {
@@ -40,14 +35,23 @@ module.exports = {
 }
 ```
 
-Start the GraphQL server on localhost, port 3000.
+Use the `npx json-graphql-server <db_file_name>` command to start the GraphQL server on localhost, port 3000.
 
 ```sh
-json-graphql-server db.js
+npx json-graphql-server db.js
 ```
 
-To use a port other than 3000, you can run `json-graphql-server db.js --p <your port here>`
-To use a host other than localhost, you can run `json-graphql-server db.js --h <your host here>`
+To use a different port, use the `--port` or `-p` option:
+
+```
+npx json-graphql-server db.js --p 8080
+```
+
+To use a different host, use the `--host` or `-h` option: 
+
+```
+npx json-graphql-server db.js -h 127.0.0.1
+```
 
 Now you can query your data in graphql. For instance, to issue the following query:
 
@@ -89,7 +93,7 @@ Go to http://localhost:3000/?query=%7B%20Post%28id%3A%201%29%20%7B%20id%20title%
 }
 ```
 
-The json-graphql-server accepts queries in GET and POST. Under the hood, it uses [the `express-graphql` module](https://github.com/graphql/express-graphql). Please refer to their documentations for details about passing variables, etc.
+The json-graphql-server accepts queries in GET and POST. Under the hood, it uses [the `graphql-http` module](https://graphql.org/graphql-js/graphql-http/). Please refer to their documentations for details about passing variables, etc.
 
 Note that the server is [GraphiQL](https://github.com/graphql/graphiql) enabled, so you can query your server using a full-featured graphical user interface, providing autosuggest, history, etc. Just browse http://localhost:3000/ to access it.
 
@@ -98,7 +102,7 @@ Note that the server is [GraphiQL](https://github.com/graphql/graphiql) enabled,
 ## Install
 
 ```sh
-npm install -g json-graphql-server
+npm install -D json-graphql-server
 ```
 
 ## Generated Types and Queries
@@ -115,7 +119,7 @@ type Mutation {
   createPost(data: String): Post
   createManyPost(data: [{data:String}]): [Post]
   updatePost(data: String): Post
-  removePost(id: ID!): Post
+  deletePost(id: ID!): Post
 }
 type Post {
     id: ID!
@@ -448,13 +452,14 @@ Then use the `jsonGraphqlExpress` express middleware:
 
 ```js
 import express from 'express';
-import jsonGraphqlExpress from 'json-graphql-server';
+import jsonGraphqlExpress from 'json-graphql-server/node';
 
 const PORT = 3000;
 const app = express();
 const data = {
     // ... your data
 };
+
 app.use('/graphql', jsonGraphqlExpress(data));
 app.listen(PORT);
 ```
@@ -468,7 +473,7 @@ Useful when using XMLHttpRequest directly or libraries such as [axios](https://w
 Add a `script` tag referencing the library:
 
 ```html
-<script src="../lib/json-graphql-server.client.min.js"></script>
+<script src="../dist/json-graphql-server.umd.js"></script>
 ```
 
 It will expose the `JsonGraphqlServer` as a global object:

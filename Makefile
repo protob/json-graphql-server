@@ -10,19 +10,25 @@ install: package.json ## Install dependencies
 	@$(PKG) install
 
 watch: ## continuously compile ES6 files to JS
-	NODE_ENV=development ./node_modules/.bin/webpack --watch
+	@yarn vite build --watch
 
 test: ## Launch unit tests
-	@NODE_ENV=test ./node_modules/.bin/jest
+	@yarn run test
 
 watch-test: ## Launch unit tests and watch for changes
-	@NODE_ENV=test ./node_modules/.bin/jest --watch
+	@yarn run watch-test
+
+check: ## Lint and format the source code
+	@yarn run check
+
+lint: ## Lint the source code
+	@yarn run lint
 
 format: ## Format the source code
-	@./node_modules/.bin/eslint --fix ./src
+	@yarn run format
 
 run: ## Launch server with example data
-	@node ./bin/json-graphql-server.js example/data.js
+	@yarn run server
 
 build: ## Build production release
-	@NODE_ENV=production ./node_modules/.bin/webpack
+	@yarn run build
